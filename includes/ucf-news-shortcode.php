@@ -67,20 +67,29 @@ if ( ! class_exists( 'UCF_News_Shortcode' ) ) {
 				'layout'   => 'classic',
 				'sections' => '',
 				'topics'   => '',
+				'offset'   => 0,
 				'limit'    => 3
-			), $attr);
+			), $attr );
 
 			$title = $attr['title'];
 			$layout = $attr['layout'];
 
 			$args = array(
-				'sections' => $attr['sections'] ? explode( ',', $attr['sections'] ) : null,
-				'topics'   => $attr['topics'] ? explode( ',', $attr['topics'] ) : null,
+				'sections' => $attr['sections'] ?: null,
+				'topics'   => $attr['topics'] ?: null,
+				'offset'   => $attr['offset'] ? (int) $attr['offset'] : 0,
 				'limit'    => $attr['limit'] ? (int) $attr['limit'] : 3
 			);
 
 			$items = UCF_News_Feed::get_news_items( $args );
-			echo UCF_News_Common::display_news_items( $items, $layout, $title, 'default' );
+
+			ob_start();
+
+			if ( $items ) {
+				echo UCF_News_Common::display_news_items( $items, $layout, $title, 'default' );
+			}
+
+			return ob_get_clean();
 		}
 	}
 }
